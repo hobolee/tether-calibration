@@ -5,7 +5,7 @@ import matplotlib.animation as animation
 import matplotlib
 from scipy.interpolate import make_interp_spline
 
-index = 2
+index = 3
 with open('../Videos/0%i.txt' % index) as f:
     num = f.read().split()
     num = [float(x) for x in num]
@@ -17,7 +17,7 @@ for i in range(9, 0, -2):
 
 # deg_0 = deg_0[deg_0[:, 9].argsort()]
 #84, 75
-length = 75
+length = 90
 plt.figure()
 plt.tight_layout()
 plt.ion()

@@ -5,7 +5,7 @@ import matplotlib.animation as animation
 import matplotlib
 from scipy.interpolate import make_interp_spline
 
-index = '2'
+index = '12'
 index = index.zfill(2)
 
 with open('../Videos/%s.txt' % index) as f:
@@ -25,8 +25,8 @@ for i in range(9, 0, -2):
 
 # deg_0 = deg_0[deg_0[:, 9].argsort()]
 
-# 第一个最大偏移 84, 75, 76, 83, 77, 95, 90, 71, 98, 86, 75， 65
-max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75]
+# 第一个最大偏移 84, 75, 76, 83, 77, 95, 90, 71, 98, 86, 75， 65, 72
+max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75, 65, 72]
 
 length = len(deg_0)
 plt.figure()

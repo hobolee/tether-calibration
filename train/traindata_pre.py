@@ -6,8 +6,8 @@ from torch.utils.data import DataLoader, Dataset
 import scipy.io as scio
 from network_building import MyModel
 
-max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75]
-for i in range(6):
+max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75, 65, 72]
+for i in range(12):
     data_path = '../Videos/0%s.txt' % str(i+1)
     with open(data_path) as f:
         num = f.read().split()
@@ -25,7 +25,7 @@ for i in range(6):
     # plt.show()
 
     # R(x, angle) = [[1 0 0], [0 ca -sa], [0 sa ca]]
-    angle = 0
+    angle = math.pi * (i / 6)
     x1 = data[:, 2]
     y1 = data[:, 3] * -math.sin(angle)
     z1 = data[:, 3] * math.cos(angle)

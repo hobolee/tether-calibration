@@ -5,20 +5,29 @@ import matplotlib.animation as animation
 import matplotlib
 from scipy.interpolate import make_interp_spline
 
-index = 7
+index = '2'
+index = index.zfill(2)
 
-with open('../Videos/0%i.txt' % index) as f:
+with open('../Videos/%s.txt' % index) as f:
     num = f.read().split()
     num = [float(x) for x in num]
 deg_0 = np.array(num).reshape(int(len(num)/11), 11)
+# 减去固定点
 for i in range(8, -1, -2):
     deg_0[:, i] = deg_0[:, i] - deg_0[:, 0]
 for i in range(9, 0, -2):
     deg_0[:, i] = deg_0[:, i] - deg_0[:, 1]
 
+# 减去本系列第一个点
+# for i in range(1, 10, 2):
+#     deg_0[1:, i] = deg_0[1:, i] - deg_0[0, i]
+#     deg_0[0, i] = 0
+
 # deg_0 = deg_0[deg_0[:, 9].argsort()]
 
-#length 84, 75, 76, 83, 77, 95
+# 第一个最大偏移 84, 75, 76, 83, 77, 95, 90, 71, 98, 86, 75， 65
+max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75]
+
 length = len(deg_0)
 plt.figure()
 plt.tight_layout()
@@ -44,16 +53,16 @@ for i in range(length):
     plt.plot(xs, ys)
     plt.ylim(-60, 10)
     plt.show()
-    img_path = "../Videos/img%i/%i.jpg" % (index, i)
+    img_path = "../Videos/img%s/%i.jpg" % (index, i)
     plt.savefig(img_path)
     plt.clf()
 
 fps = 5
 size = (640, 480)
-output_path = "../Videos/output_%i.avi" % index
+output_path = "../Videos/output_%s.avi" % index
 video = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc('I', '4', '2', '0'), fps, size)
 for i in range(length):
-    image_path = "../Videos/img%i/%i.jpg" % (index, i)
+    image_path = "../Videos/img%s/%i.jpg" % (index, i)
     print(image_path)
     img = cv2.imread(image_path)
     video.write(img)

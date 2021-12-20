@@ -6,12 +6,15 @@ from torch.utils.data import DataLoader, Dataset
 import scipy.io as scio
 from network_building import MyModel
 
+max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75]
 for i in range(6):
     data_path = '../Videos/0%s.txt' % str(i+1)
     with open(data_path) as f:
         num = f.read().split()
         num = [float(x) for x in num]
     data = np.array(num).reshape(int(len(num)/11), 11)
+    # 去除第一段
+    data = data[max_first[i]:, :]
     for j in range(8, -1, -2):
         data[:, j] = data[:, j] - data[:, 0]
     for j in range(9, 0, -2):
@@ -40,8 +43,9 @@ for i in range(6):
     theta = np.array([math.atan(i) for i in tan_theta])
     tan_phi = (y4 - y3)/(x4 - x3)
     phi = np.array([math.atan(i) for i in tan_phi])
-    fz = data[:, 10] * math.cos(angle)
-    fy = data[:, 10] * math.sin(angle)
+    # 加初始力
+    fz = (data[:, 10] + 0.13) * math.cos(angle)
+    fy = (data[:, 10] + 0.13) * math.sin(angle)
     if i == 0:
         all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
         all_data = torch.from_numpy(all_data)

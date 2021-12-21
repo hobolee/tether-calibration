@@ -8,7 +8,8 @@ from network_building import MyModel
 
 max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75, 65, 72]
 for i in range(12):
-    data_path = '../Videos/0%s.txt' % str(i+1)
+    index = str(i+1).zfill(2)
+    data_path = '../Videos/%s.txt' % index
     with open(data_path) as f:
         num = f.read().split()
         num = [float(x) for x in num]

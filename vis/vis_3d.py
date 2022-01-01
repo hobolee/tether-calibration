@@ -119,15 +119,18 @@ for index in range(12):
         ax1.set_zlabel('Z')
         ax1.set_zlim(-80, 80)
         ax1.view_init(elev=25, azim=315)
+        # ax1.view_init(elev=0, azim=0)
         img_path = "../Videos/img%s_3d/%i.jpg" % (index, i)
-        plt.savefig(img_path)
+        # plt.savefig(img_path, dpi=600)
+        plt.savefig(img_path, dpi=200)
         # plt.show()
         plt.clf()
         # plt.close(fig)
 
 fps = 5
-size = (640, 480)
-output_path = "../Videos/output2_3d.avi"
+size = (1280, 960)
+# size = (3840, 2880)
+output_path = "../Videos/output_bird_3d.avi"
 video = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc('I', '4', '2', '0'), fps, size)
 for index in range(12):
     index = str(index + 1).zfill(2)

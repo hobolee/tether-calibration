@@ -5,6 +5,8 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 import scipy.io as scio
 from network_building import MyModel
+from tensorboardX import SummaryWriter
+
 
 max_first = [84, 75, 83, 77, 95, 90, 71, 98, 86, 75, 65, 72]
 for i in range(12):
@@ -75,9 +77,9 @@ train_data, test_data = torch.utils.data.random_split(all_data, [train_size, tes
 train_loader = DataLoader(train_data, batch_size=128, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=128, shuffle=True)
 
-
+writer = SummaryWriter(comment='MyModel')
 model = MyModel()
-epochs = 500
+epochs = 5000
 loss_fn = torch.nn.MSELoss()
 learning_rate = 1e-5
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -114,20 +116,26 @@ def train_loop(train_loader, model, loss_fn, optimizer):
 def test_loop(test_loader, model, loss_fn):
     size = len(test_loader.dataset)
     num_batches = len(test_loader)
-    test_loss = 0
+    t_loss = 0
     with torch.no_grad():
         for X, y in test_loader:
             pred = model(X.float())
-            test_loss += loss_fn(pred, y.float()).item()
-    test_loss /= num_batches
-    print(f"Avg loss: {test_loss:>8f} \n")
+            t_loss += loss_fn(pred, y.float()).item()
+    t_loss /= num_batches
+    test_loss.append(t_loss)
+    print(f"Avg loss: {t_loss:>8f} \n")
+    return t_loss
 
 
+test_loss = []
+train_loss = []
 for t in range(epochs):
     print(f"Epoch {t + 1}\n-------------------------------")
     loss = train_loop(train_loader, model, loss_fn, optimizer)
-    test_loop(test_loader, model, loss_fn)
-    if t % 10 == 9:
+    t_loss = test_loop(test_loader, model, loss_fn)
+    writer.add_scalars('Loss', {'train_loss': loss, 'test_loss': t_loss}, t)
+    train_loss.append(loss)
+    if t % 100 == 99:
         torch.save({
             'epoch': t,
             'model_state_dict': model.state_dict(),
@@ -135,7 +143,19 @@ for t in range(epochs):
             'loss': loss,
         }, 'model_weights_opt1.pth')
 
+test_loss = torch.tensor(test_loss)
+train_loss = torch.tensor(train_loss)
+torch.save(test_loss, 'test_loss')
+torch.save(train_loss, 'train_loss')
 
+# plt.figure()
+# plt.plot(test_loss.float())
+# plt.plot(train_loss.float())
+# plt.show()
+
+x = torch.randn(11).requires_grad_(True)
+writer.add_graph(model, x)
+writer.close
 
 
 

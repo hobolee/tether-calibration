@@ -9,9 +9,9 @@ class MyModel(nn.Module):
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
-            nn.Linear(64, 16),
+            nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Linear(16, 2)
+            nn.Linear(32, 2)
         )
 
     def forward(self, x):

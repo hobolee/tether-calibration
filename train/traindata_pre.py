@@ -42,30 +42,33 @@ for i in range(12):
     y4 = data[:, 9] * -math.sin(angle)
     z4 = data[:, 9] * math.cos(angle)
 
-    tan_theta = (z4 - z3)/(x4 - x3)
+    tan_theta = (y4 - y3)/(x4 - x3)
     theta = np.array([math.atan(i) for i in tan_theta])
-    tan_phi = (y4 - y3)/(x4 - x3)
+    m = (y4 - y3)**2 + (x4 - x3)**2
+    sqrt_m = [math.sqrt(x) for x in m]
+    tan_phi = (z4 - z3) / sqrt_m
     phi = np.array([math.atan(i) for i in tan_phi])
+
     # 加初始力
     fz = (data[:, 10] + 0.13) * math.cos(angle)
     fy = (data[:, 10] + 0.13) * math.sin(angle)
     if i == 0:
         # all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
-        # all_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
-        all_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
+        all_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
+        # all_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
         all_data = torch.from_numpy(all_data)
     else:
         # all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
-        # tmp_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
-        tmp_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
+        tmp_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
+        # tmp_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
         tmp_data = torch.from_numpy(tmp_data)
         all_data = torch.cat((all_data, tmp_data), 0)
 
 
 class MyDataset(Dataset):
     def __init__(self, dataset):
-        self.X = dataset[:, 0:2]
-        self.y = dataset[:, 2:5]
+        self.X = dataset[:, :2]
+        self.y = dataset[:, 2:]
 
     def __len__(self):
         return len(self.y)
@@ -145,7 +148,7 @@ for t in range(epochs):
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss,
-        }, 'model_weights_opt_mac_xyz.pth')
+        }, 'model_weights_opt_mac.pth')
 
 test_loss = torch.tensor(test_loss)
 train_loss = torch.tensor(train_loss)

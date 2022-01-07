@@ -7,7 +7,7 @@ import scipy.io as io
 learning_rate = 1e-5
 model = MyModel()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-checkpoint = torch.load('model_weights_opt1.pth')
+checkpoint = torch.load('model_weights_opt_mac.pth')
 model.load_state_dict(checkpoint['model_state_dict'])
 optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 epoch = checkpoint['epoch']
@@ -55,10 +55,14 @@ for i in range(12):
     fz = (data[:, 10] + 0.13) * math.cos(angle)
     fy = (data[:, 10] + 0.13) * math.sin(angle)
     if i == 0:
-        all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
+        # all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
+        all_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
+        # all_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
         all_data = torch.from_numpy(all_data)
     else:
-        tmp_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
+        # all_data = np.array([x1, y1, z1, x2, y2, z2, x3, y3, z3, theta, phi, fz, fy]).transpose(1, 0)
+        tmp_data = np.array([theta, phi, fz, fy]).transpose(1, 0)
+        # tmp_data = np.array([theta, phi, x3, y3, z3]).transpose(1, 0)
         tmp_data = torch.from_numpy(tmp_data)
         all_data = torch.cat((all_data, tmp_data), 0)
 
@@ -66,9 +70,9 @@ table = []
 for i in range(len(all_data)):
     x = all_data[i][:-2].float()
     y = model(x)
-    tmp = [np.array(x[9]), np.array(x[10]), y[0].detach().numpy(), y[1].detach().numpy()]
-    tmp_loss = math.sqrt((y[0] - all_data[i][11])**2 + (y[1] - all_data[i][12])**2)
+    tmp = [np.array(x[0]), np.array(x[1]), y[0].detach().numpy(), y[1].detach().numpy()]
+    # tmp_loss = math.sqrt((y[0] - all_data[i][11])**2 + (y[1] - all_data[i][12])**2)
     table.append(tmp)
 
-np.save('table.txt', table)
-io.savemat('table.mat', {'x': table})
+# np.save('table.txt', table)
+io.savemat('table_f.mat', {'x': table})
